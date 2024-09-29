@@ -1,0 +1,10 @@
+load ./Tests/Sample_Tests/test1/input1.s
+step
+step
+step
+step
+mem 0x10000 4
+regs 
+run
+step
+exit

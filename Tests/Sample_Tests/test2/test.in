@@ -1,0 +1,10 @@
+load ./Tests/Sample_Tests/test2/input.s
+break 13
+show-stack
+run
+step
+run
+step
+show-stack
+run
+show-stack

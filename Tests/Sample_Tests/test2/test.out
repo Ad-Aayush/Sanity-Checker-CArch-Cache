@@ -1,0 +1,47 @@
+Breakpoint set at line 13
+Call Stack:
+main:0
+Executed addi x10, x0, 2; PC=0x00000000
+Executed jal x1, fact; PC=0x00000004
+Executed addi sp, sp, -16; PC=0x0000000c
+Executed sd x1, 8(sp); PC=0x00000010 
+Executed sd x10, 0(sp); PC=0x00000014 
+Executed addi x5, x10, -1; PC=0x00000018 
+Executed blt x0, x5, L1; PC=0x0000001c
+Executed addi x10, x10, -1; PC=0x000002c
+Execution stopped at breakpoint
+Call Stack:
+main:2
+fact:13
+Executed jal x1, fact; PC=0x00000030
+Executed addi sp, sp, -16; PC=0x0000000c
+Executed sd x1, 8(sp); PC=0x00000010 
+Executed sd x10, 0(sp); PC=0x00000014 
+Executed addi x5, x10, -1; PC=0x00000018 
+Executed blt x0, x5, L1; PC=0x0000001c
+Executed addi x10, x10, -1; PC=0x000002c
+Executed jal x1, fact; PC=0x00000030
+Call Stack:
+main:2
+fact:13
+fact:13
+Executed addi sp, sp, -16; PC=0x0000000c
+Executed sd x1, 8(sp); PC=0x00000010 
+Executed sd x10, 0(sp); PC=0x00000014 
+Executed addi x5, x10, -1; PC=0x00000018 
+Executed blt x0, x5, L1; PC=0x0000001c
+Executed addi x10, x0, 1; PC=0x00000020
+Executed addi sp, sp, 16; PC=0x00000024
+Executed jalr x0, 0(x1); PC=0x00000028
+Executed addi x6, x10, 0; PC=0x00000034
+Executed ld x10, 0(sp); PC=0x00000038
+Executed ld x1, 8(sp); PC=0x0000003c
+Executed addi sp, sp, 16; PC=0x0000040
+Executed addi x20, x0, 1; PC=0x0000044
+Executed add x10, x10, x10; PC=0x00000048
+Executed addi x20, x20, 1; PC=0x0000004c
+Executed bne x20, x6, mul; PC=0x00000050
+Executed jalr x0, 0(x1); PC=0x00000054
+Executed beq x0, x0, exit; PC=0x00000008
+Executed add x0, x0, x0; PC=0x00000058
+Empty Call Stack: Execution complete
