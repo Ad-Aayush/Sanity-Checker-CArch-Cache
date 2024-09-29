@@ -5,7 +5,7 @@ This is a simple sanity check to ensure that your submission format is correct. 
 
 - For running the tester, on your submission zip file named `xy.zip`, run the following command:
   ```bash
-  make path="xy.zip"
+  make file_name="xy.zip"
   ```
   Note that the code also checks if the zip file is named correctly. If the zip file is not named correctly, the code will not run.
 

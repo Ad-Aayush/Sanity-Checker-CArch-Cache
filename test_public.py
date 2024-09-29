@@ -61,7 +61,7 @@ def handle_process(commands):
     try:
         # Start the process
         process = subprocess.Popen(
-            ["./submission_files/test_submission"],  # Replace with your actual command
+            ["./submission_files/test_submission"], 
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
