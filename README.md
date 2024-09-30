@@ -3,11 +3,22 @@ This is a simple sanity check to ensure that your submission format is correct. 
 
 ### Using the tester
 
+- Clone the repository using the command:
+  ```
+   git clone "https://github.com/DikshantK2004/Sanity-Checker-CArch"
+  ```
+- Place your submission zip in the same folder as the cloned directory.
 - For running the tester, on your submission zip file named `xy.zip`, run the following command:
   ```bash
-  make file_name="xy.zip"
+  make test file_name="xy.zip"
   ```
-  Note that the code also checks if the zip file is named correctly. If the zip file is not named correctly, the code will not run.
+  This command only runs the tests and does not check for the naming conventions or necessary deliverables. It runs the code and generates the diff files.
+
+- Before final submission of your assignment, run the following command:
+  ```bash
+  make run file_name="xy.zip"
+  ```
+  The above command will check for all the expected deliverables as mentioned in the assignment, along with their naming convention and the code's correctness. 
 
 - For cleaning the diff logs and the temporary files, run the following command:
   ```bash

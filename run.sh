@@ -18,5 +18,5 @@ else
 fi
 
 # Run the Python script
-echo "Running the sanity check script with $file_name"
-python3 test_public.py "$file_name"
+echo "Running the final submission check on $file_name"
+python3 test_public.py "$file_name" "true"

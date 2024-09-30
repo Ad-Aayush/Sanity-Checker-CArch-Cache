@@ -35,24 +35,21 @@ def unzip_to_custom_dir(zip_file, custom_dir):
 
 def check_required_files(directory):
     """Checks if either a .pdf, a .md or a .txt file exists in the given directory."""
-    
-    has_cpp = False
+
     required_files = json.load(open("config.json"))["necessary_files"]
     contains = [False]*len(required_files)
     for file in os.listdir(directory):
-        if file.endswith('.cpp'):
-            has_cpp = True
         for i, required_file in enumerate(required_files):
             if file == required_file:
                 contains[i] = True
 
-    if not has_cpp:
-        print("The Folder Probably contains no Source Code File\nExiting...")
-        exit_gracefully()
+    # if not has_cpp:
+    #     print("The Folder Probably contains no Source Code File...\nExiting...")
+    #     exit_gracefully()
     
     for i, required_file in enumerate(required_files):
         if not contains[i]:
-            print(f"Required file {required_file} missing.\nExiting...")
+            print(f"Required file {required_file} missing.")
             exit_gracefully()
     return True
 
@@ -61,7 +58,7 @@ def handle_process(commands):
     try:
         # Start the process
         process = subprocess.Popen(
-            ["./submission_files/test_submission"], 
+            ["./submission_files/riscv_sim"], 
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -123,7 +120,7 @@ def handle_process(commands):
             exit_gracefully()
     return outputs
 
-def run_interactive_cpp(cpp_file, inputs, expected_output, input_folder=None, test_type=None):
+def run_interactive_cpp( inputs, expected_output, input_folder=None, test_type=None):
     """Compiles and runs the C++ file interactively, sending inputs and capturing output."""
 
     print("Running test case: ", input_folder)
@@ -172,19 +169,15 @@ def main(zip_file, tests_folder):
         custom_dir = os.path.join(custom_dir, list_of_files[0])
         list_of_files = os.listdir(custom_dir)
 
-    files_check = check_required_files(custom_dir)
+    global run_type
+    if run_type != None:
+        files_check = check_required_files(custom_dir)
 
-    if files_check:
-        print("All Required Files Present\n")
+        if files_check:
+            print("All Required Files Present\n")
     
-    cpp_files = [f for f in os.listdir(custom_dir) if f.endswith('.cpp')]
 
-    if len(cpp_files) > 1:
-        print("Multiple C++ files found. Aborting.")
-        exit_gracefully()
-    else:
-        cpp_file_path = os.path.join(custom_dir, cpp_files[0])
-
+    if True:
         compile_command = "make"
         compile_process = subprocess.run(
         compile_command, 
@@ -194,11 +187,11 @@ def main(zip_file, tests_folder):
         stderr=subprocess.PIPE   # Redirect stderr to /dev/null
         )   
         if compile_process.returncode != 0:
-            print(f"Compilation failed for {cpp_file_path}")
+            print(f"Compilation failed. MakeFile returned {compile_process.returncode}\n")
             exit_gracefully()
-        elif "test_submission" not in os.listdir("submission_files"):
+        elif "riscv_sim" not in os.listdir("submission_files"): # checking for the executable name
             # print(f"Compilation successful for {cpp_file}")
-            print(f"Incorrect executable name obtained on running make\n")
+            print(f"Incorrect executable format.\n")
             exit_gracefully()
         TestGroup = os.listdir(tests_folder)
 
@@ -216,7 +209,7 @@ def main(zip_file, tests_folder):
                 with open(input_file, 'r') as infile:
                     inputs = [line.strip() for line in infile.readlines()]
 
-                success = run_interactive_cpp(cpp_file_path, inputs, output_file, test, test_type)
+                success = run_interactive_cpp( inputs, output_file, test, test_type)
 
                 if success:
                     print(f"Test case {test_type+'/'+test} passed.")
@@ -228,11 +221,15 @@ def main(zip_file, tests_folder):
     exit_gracefully()
 
 import sys
+run_type  = None
+
 if __name__ == "__main__":
-    
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2 or len(sys.argv) > 3:
         print("Usage: python3 test_public.py <path_to_submission_zip>")
         exit(1)
+        
+    if len(sys.argv) == 3:
+        run_type = sys.argv[2]
     subprocess.run (["rm" ,"-rf", "diffs"])
     zip_file = sys.argv[1]
     subprocess.run(["mkdir", "-p", "diffs"])
