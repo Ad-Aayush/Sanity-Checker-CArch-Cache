@@ -1,6 +1,6 @@
 main: addi x10, x0, 5
-      lui sp 0x5
-  	  jal x1, fact
+      lui sp, 0x50
+  	jal x1, fact
       beq x0, x0, exit
 fact: addi sp, sp, -16
   	  sd x1, 8(sp)
@@ -17,10 +17,10 @@ L1:   addi x10, x10, -1
   	  ld x1, 8(sp)
   	  addi sp, sp, 16
       addi x20, x0, 0
-      addi x8 x0 0
+      addi x8, x0, 0
 mul:  add x8, x8, x6
       addi x20, x20, 1
       bne x20, x10, mul 
-      add x10 x8 x0
-  	  jalr x0, x1(0)
+      add x10, x8, x0
+  	jalr x0, x1(0)
 exit: add x0, x0, x0
