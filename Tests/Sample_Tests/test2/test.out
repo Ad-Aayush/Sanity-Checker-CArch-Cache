@@ -3,7 +3,7 @@ Breakpoint set at line 14
 Call Stack:
 main:1
 Executed addi x10, x0, 2; PC=0x00000000
-Executed sp 0x50; PC=0x00000004
+Executed lui sp, 0x50; PC=0x00000004
 Executed jal x1, fact; PC=0x00000008
 Executed addi sp, sp, -16; PC=0x00000010
 Executed sd x1, 8(sp); PC=0x00000014
