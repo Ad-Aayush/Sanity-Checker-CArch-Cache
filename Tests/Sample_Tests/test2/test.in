@@ -1,7 +1,9 @@
 load ./Tests/Sample_Tests/test2/input.s
-break 13
+break 12
+break 14
 show-stack
 run
+show-stack
 step
 run
 step
