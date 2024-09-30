@@ -13,7 +13,7 @@ file_base=$(basename "$file_name")
 if echo "$file_base" | grep -Eq "^Lab4_[a-zA-Z]{2}[0-9]{2}BTECH[0-9]{5}\.zip$|^Lab4_[a-zA-Z]{2}[0-9]{2}BTECH[0-9]{5}_[a-zA-Z]{2}[0-9]{2}BTECH[0-9]{5}\.zip$"; then
     echo "File name is correct"
 else
-    echo "Error: File name does not follow the Lab4_roll1_roll2.zip convention"
+    echo "Error: File name does not follow the Lab4_roll1_roll2.zip/Lab4_roll1.zip convention"
     exit 1
 fi
 
