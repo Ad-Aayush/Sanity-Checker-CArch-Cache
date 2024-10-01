@@ -1,7 +1,7 @@
 Breakpoint set at line 12
 Breakpoint set at line 14
 Call Stack:
-main:1
+main:0
 Executed addi x10, x0, 2; PC=0x00000000
 Executed lui sp, 0x50; PC=0x00000004
 Executed jal x1, fact; PC=0x00000008
@@ -14,7 +14,7 @@ Executed addi x10, x10, -1; PC=0x0000030
 Execution stopped at breakpoint
 Call Stack:
 main:3
-fact:14
+fact:13
 Executed jal x1, fact; PC=0x00000034
 Executed addi sp, sp, -16; PC=0x00000010
 Executed sd x1, 8(sp); PC=0x00000014
@@ -28,7 +28,6 @@ Executed jalr x0, x1(0); PC=0x0000002c
 Call Stack:
 main:3
 fact:14
-fact:12
 Executed addi x6, x10, 0; PC=0x00000038
 Executed ld x10, 0(sp); PC=0x0000003c
 Executed ld x1, 8(sp); PC=0x00000040
