@@ -1,7 +1,7 @@
-Executed: addi x5, x5, 0 ; PC = 0x00000000
-Executed: lui x4, 0x10 ; PC = 0x00000004
-Executed: addi x5, x5, -1; PC = 0x00000008
-Executed: sd x5, 2(x4); PC = 0x0000000c
+Executed: addi x5, x5, 0; PC=0x00000000
+Executed: lui x4, 0x10; PC=0x00000004
+Executed: addi x5, x5, -1; PC=0x00000008
+Executed: sd x5, 2(x4); PC=0x0000000c
 Memory[0x10000] = 0x0
 Memory[0x10001] = 0x0
 Memory[0x10002] = 0xFF
