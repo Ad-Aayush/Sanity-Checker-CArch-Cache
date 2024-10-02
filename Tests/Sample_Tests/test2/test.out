@@ -24,7 +24,7 @@ Executed blt x0, x5, L1; PC=0x00000020
 Executed addi x10, x0, 1; PC=0x00000024
 Executed addi sp, sp, 16; PC=0X00000028
 Execution stopped at breakpoint
-Executed jalr x0, x1(0); PC=0x0000002c
+Executed jalr x0, 0(x1); PC=0x0000002c
 Call Stack:
 main:3
 fact:14
@@ -41,7 +41,7 @@ Executed add x8, x8, x6; PC=0X00000050
 Executed addi x20, x20, 1; PC=0x00000054
 Executed bne x20, x10, mul; PC=0x00000058
 Executed add x10, x8, x0; PC=0x0000005c
-Executed jalr x0, x1(0); PC=0x00000060
+Executed jalr x0, 0(x1); PC=0x00000060
 Executed beq x0, x0, Exit; PC=0x0000000c
 Executed add x0, x0, x0; PC=0x00000064
 Empty Call Stack: Execution complete

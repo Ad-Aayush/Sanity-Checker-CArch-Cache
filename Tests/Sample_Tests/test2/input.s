@@ -9,7 +9,7 @@ fact: addi sp, sp, -16
   	  blt x0, x5, L1
   	  addi x10, x0, 1
   	  addi sp, sp, 16
-  	  jalr x0, x1(0)
+  	  jalr x0, 0(x1)
 L1:   addi x10, x10, -1
   	  jal x1, fact
   	  addi x6, x10, 0
@@ -22,5 +22,5 @@ mul:  add x8, x8, x6
       addi x20, x20, 1
       bne x20, x10, mul 
       add x10, x8, x0
-  	jalr x0, x1(0)
+      jalr x0, 0(x1)
 exit: add x0, x0, x0
