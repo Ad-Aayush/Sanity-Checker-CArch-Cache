@@ -10,7 +10,7 @@ Executed sd x1, 8(sp); PC=0x00000014
 Executed sd x10, 0(sp); PC=0x00000018
 Executed addi x5, x10, -1; PC=0x0000001c
 Executed blt x0, x5, L1; PC=0x00000020
-Executed addi x10, x10, -1; PC=0x0000030
+Executed addi x10, x10, -1; PC=0x00000030
 Execution stopped at breakpoint
 Call Stack:
 main:3
@@ -22,7 +22,7 @@ Executed sd x10, 0(sp); PC=0x00000018
 Executed addi x5, x10, -1; PC=0x0000001c
 Executed blt x0, x5, L1; PC=0x00000020
 Executed addi x10, x0, 1; PC=0x00000024
-Executed addi sp, sp, 16; PC=0X00000028
+Executed addi sp, sp, 16; PC=0x00000028
 Execution stopped at breakpoint
 Executed jalr x0, 0(x1); PC=0x0000002c
 Call Stack:
@@ -34,14 +34,15 @@ Executed ld x1, 8(sp); PC=0x00000040
 Executed addi sp, sp, 16; PC=0x00000044
 Executed addi x20, x0, 0; PC=0x00000048
 Executed addi x8, x0, 0; PC=0x0000004c
-Executed add x8, x8, x6; PC=0X00000050
+Executed add x8, x8, x6; PC=0x00000050
 Executed addi x20, x20, 1; PC=0x00000054
 Executed bne x20, x10, mul; PC=0x00000058
-Executed add x8, x8, x6; PC=0X00000050
+Executed add x8, x8, x6; PC=0x00000050
 Executed addi x20, x20, 1; PC=0x00000054
 Executed bne x20, x10, mul; PC=0x00000058
 Executed add x10, x8, x0; PC=0x0000005c
 Executed jalr x0, 0(x1); PC=0x00000060
-Executed beq x0, x0, Exit; PC=0x0000000c
+Executed beq x0, x0, exit; PC=0x0000000c
 Executed add x0, x0, x0; PC=0x00000064
 Empty Call Stack: Execution complete
+Exited the simulator
