@@ -1,7 +1,15 @@
 {
-    "necessary_files" : [
-        "Report.pdf",
-        "makefile",
-        "README"
-    ]
+    "necessary_files" : {
+        "report": {
+            "allowed_ext" : ["pdf"],
+            "rule" : "lowercase"
+        },
+        "makefile": {
+            "allowed": ["makefile", "Makefile"]
+        },
+        "readme":{
+            "allowed_ext" : ["md", "txt", ""],
+            "rule" : "lowercase"
+        }
+    }
 }

@@ -30,27 +30,54 @@ def unzip_to_custom_dir(zip_file, custom_dir):
                 item_path = os.path.join(folder_paths, item)
                 shutil.move(item_path, custom_dir)
             os.rmdir(folder_paths)
-
+            
     return custom_dir
 
-def check_required_files(directory):
-    """Checks if either a .pdf, a .md or a .txt file exists in the given directory."""
+def check_required_files(directory, config_path="config.json"):
+    """Checks if the necessary files exist in the given directory based on updated rules."""
 
-    required_files = json.load(open("config.json"))["necessary_files"]
-    contains = [False]*len(required_files)
-    for file in os.listdir(directory):
-        for i, required_file in enumerate(required_files):
-            if file == required_file:
-                contains[i] = True
+    try:
+        with open(config_path, "r") as config_file:
+            required_files = json.load(config_file)["necessary_files"]
+    except FileNotFoundError:
+        print(f"Config file '{config_path}' not found.")
+        exit_gracefully()
+    except json.JSONDecodeError:
+        print(f"Error parsing the config file '{config_path}'.")
+        exit_gracefully()
 
-    # if not has_cpp:
-    #     print("The Folder Probably contains no Source Code File...\nExiting...")
-    #     exit_gracefully()
-    
-    for i, required_file in enumerate(required_files):
-        if not contains[i]:
-            print(f"Required file {required_file} missing.")
+    try:
+        files_in_dir = os.listdir(directory)
+    except FileNotFoundError:
+        print(f"Directory '{directory}' not found.")
+        exit_gracefully()
+
+    files_in_dir_lower = [f.lower() for f in files_in_dir]
+
+    found = [False] * len(required_files)
+
+    for i, (required_file, rules) in enumerate(required_files.items()):
+        req_array = files_in_dir_lower if 'rule' in rules and rules['rule'] == 'lowercase' else files_in_dir
+        req_file = required_file.lower() if 'rule' in rules and rules['rule'] == 'lowercase' else required_file
+        if 'allowed' in rules:
+            for allowed_file in rules['allowed']:
+                if allowed_file in files_in_dir:
+                    found[i] = True
+                    break
+        elif 'allowed_ext' in rules:
+            for file in req_array:
+                name, ext = os.path.splitext(file)
+                ext = ext[1:]  
+
+                if (name == req_file and ext in rules['allowed_ext']):
+                    found[i] = True
+                    break
+
+    for i, (required_file, is_found) in enumerate(zip(required_files, found)):
+        if not is_found:
+            print(f"Required file '{required_file}' missing or doesn't meet the required rules.")
             exit_gracefully()
+
     return True
 
 outputs = []
@@ -136,8 +163,8 @@ def run_interactive_cpp( inputs, expected_output, input_folder=None, test_type=N
 
     with open(expected_output, 'r') as expected_file:
         expected_lines = expected_file.readlines()
-    outputs_cleaned = [line.strip() for entry in outputs if entry for line in entry.split('\n') if line]
-    expected_lines = [line.strip() for line in expected_lines if line.strip() != '']
+    outputs_cleaned = [line.strip().lower() for entry in outputs if entry for line in entry.split('\n') if line]
+    expected_lines = [line.strip().lower() for line in expected_lines if line.strip() != '']
     ## Writing a diff report
     diffReporter = difflib.HtmlDiff()
     html_diff = diffReporter.make_file(expected_lines, outputs_cleaned) 
@@ -191,7 +218,7 @@ def main(zip_file, tests_folder):
             exit_gracefully()
         elif "riscv_sim" not in os.listdir("submission_files"): # checking for the executable name
             # print(f"Compilation successful for {cpp_file}")
-            print(f"Incorrect executable format.\n")
+            print(f"Incorrect executable format. Executable should be named riscv_sim\n")
             exit_gracefully()
         TestGroup = os.listdir(tests_folder)
 
