@@ -1,6 +1,16 @@
 ### Computer Architecture
 This is a simple sanity check to ensure that your submission format is correct. Before submitting you Lab, ensure that all the tests pass. If any test fails, re-read the lab requirements and ensure that you have followed all instructions.
-
+### Prerequisites
+- Make sure you have `python3` installed on your system.
+- Install `flex` using the following command:
+  ```bash
+  sudo apt install flex
+  ```
+  For MacOS:
+  ```bash
+  brew install flex
+  ```
+  
 ### Using the tester
 
 - Clone the repository using the command:
