@@ -15,4 +15,13 @@ test_perms:
 run_perms:
 	chmod +x run.sh
 clean:
-	rm -rf diffs
+	rm -rf diffs lex.yy.c tester inp.txt
+
+flex: 
+	flex test.l
+	gcc lex.yy.c -o tester  
+
+run_flex: flex 	
+	./tester < inp.txt 
+clean_flex:
+	rm -rf lex.yy.c tester output.txt inp.txt

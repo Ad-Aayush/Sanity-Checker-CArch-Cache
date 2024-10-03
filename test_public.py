@@ -75,7 +75,7 @@ def check_required_files(directory, config_path="config.json"):
 
     for i, (required_file, is_found) in enumerate(zip(required_files, found)):
         if not is_found:
-            print(f"Required file '{required_file}' missing or doesn't meet the required rules.")
+            print(f"\033[91mRequired file '{required_file}' missing or doesn't meet the required rules.\033[00m")
             exit_gracefully()
 
     return True
@@ -165,18 +165,43 @@ def run_interactive_cpp( inputs, expected_output, input_folder=None, test_type=N
         expected_lines = expected_file.readlines()
     outputs_cleaned = [line.strip().lower() for entry in outputs if entry for line in entry.split('\n') if line]
     expected_lines = [line.strip().lower() for line in expected_lines if line.strip() != '']
+    with open("inp.txt", "w") as f:
+        f.write("\n".join(outputs_cleaned))
+    with open("inp.txt", "r") as f: 
+        result = subprocess.run(["./tester"], stdin=f, capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f"Tester failed with return code {result.returncode}")
+            return False
+        lexed_outputs = result.stdout.split("\n")
+    
+    with open("inp.txt", "w") as f:
+        f.write("\n".join(expected_lines))
+    
+    with open("inp.txt", "r") as f:
+        result = subprocess.run(["./tester"], stdin=f, capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f"Tester failed with return code {result.returncode}")
+            return False
+        lexed_expected = result.stdout.split("\n")
+
+    
+    
     ## Writing a diff report
     diffReporter = difflib.HtmlDiff()
     html_diff = diffReporter.make_file(expected_lines, outputs_cleaned) 
-    with open(f"diffs/{test_type}/{input_folder}.html", "w", encoding="utf-8") as f:
+    with open(f"diffs/{test_type}/{input_folder}_actual.html", "w", encoding="utf-8") as f:
         f.write(html_diff)
-    seq_match = difflib.SequenceMatcher(None, expected_lines, outputs_cleaned)
+    
+    html_diff = diffReporter.make_file(lexed_expected, lexed_outputs)
+    with open(f"diffs/{test_type}/{input_folder}_lexed.html", "w", encoding="utf-8") as f:
+        f.write(html_diff)
+    
+    seq_match = difflib.SequenceMatcher(None, lexed_expected, lexed_outputs)
     ratio = seq_match.ratio()
     ## Comparing the outputs
     if ratio == 1.0:
         return True
     else:
-        # print(f"Output mismatch. Expected: {expected_lines}, Got: {outputs_cleaned}")
         return False
 
 def exit_gracefully():
@@ -201,7 +226,7 @@ def main(zip_file, tests_folder):
         files_check = check_required_files(custom_dir)
 
         if files_check:
-            print("All Required Files Present\n")
+            print("\033[92mAll Required Files Present\033[00m\n")
     
 
     if True:
@@ -239,12 +264,13 @@ def main(zip_file, tests_folder):
                 success = run_interactive_cpp( inputs, output_file, test, test_type)
 
                 if success:
-                    print(f"Test case {test_type+'/'+test} passed.")
+                    print(f"\033[92mTest case: {test_type+'/'+test} passed\033[00m")
                 else:
-                    print(f"Test case {test_type+'/'+test} failed.")
+                    print(f"\033[91mTest case: {test_type+'/'+test} failed\033[00m")
                 outputs.clear()
                 print()
-                    
+    subprocess.run(["rm" , "-rf", "lex.yy.c" , "tester", "output.txt", "inp.txt"])
+    
     exit_gracefully()
 
 import sys
@@ -260,5 +286,6 @@ if __name__ == "__main__":
     subprocess.run (["rm" ,"-rf", "diffs"])
     zip_file = sys.argv[1]
     subprocess.run(["mkdir", "-p", "diffs"])
+    subprocess.run(["make", "flex"])
     tests_folder = os.path.join(os.path.dirname(__file__), "Tests")
     main(zip_file, tests_folder)
