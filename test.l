@@ -27,20 +27,21 @@ void yyerror(char *s);
 
 
 \-?[0-9]+ {fprintf(stdout, "%d\n", atoi(yytext));}
-
 [Br][Rr][Ee][Aa][Kk][Pp][Oo][Ii][Nn][Tt] { fprintf(stdout, "Breakpoint\n"); }
-
 [Ll][Ii][Nn][Ee] {fprintf(stdout, "line\n");}
-
 \[ {fprintf(stdout, "[\n");}
 \] {fprintf(stdout, "]\n");}
 \( {fprintf(stdout, "(\n");}
 \) {fprintf(stdout, ")\n");}
 a([0-7])    { int reg_num = 10 + atoi(yytext+1); fprintf(stdout, "x%d\n", reg_num); }
-s([0-9]|1[01]) { int reg_num = 8 + atoi(yytext+1); fprintf(stdout, "x%d\n", reg_num); }
+
+s([0-1])    { int reg_num = 8 + atoi(yytext+1); fprintf(stdout, "x%d\n", reg_num); }
+
+s(([2-9])|(1[01]))   { int reg_num = 16 + atoi(yytext+1); fprintf(stdout, "x%d\n", reg_num); }
+
 t([0-2])    { int reg_num = 5 + atoi(yytext+1); fprintf(stdout, "x%d\n", reg_num); }
+
 t([3-6])    { int reg_num = 28 + atoi(yytext+1); fprintf(stdout, "x%d\n", reg_num); }
-f([0-9]|[12][0-9]|3[01])  { fprintf(stdout, "f%s\n", yytext+1); }
 ra          { fprintf(stdout, "x1\n"); }
 sp          { fprintf(stdout, "x2\n"); }
 gp          { fprintf(stdout, "x3\n"); }

@@ -121,7 +121,7 @@ def handle_process(commands):
                     try:
                         error_output = process.stderr.read()
                         if error_output:
-                            print(f"Error from process: {error_output}")
+                            print(f"Error from process:\033[93m{error_output}\033[0m")
                     except Exception as e:
                         print(f"Error reading stderr: {e}")
                         exit_gracefully()
