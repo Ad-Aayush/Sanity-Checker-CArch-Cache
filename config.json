@@ -7,7 +7,7 @@
         "makefile": {
             "allowed": ["makefile", "Makefile"]
         },
-        "readme":{
+        "readme": {
             "allowed_ext" : ["md", "txt", ""],
             "rule" : "lowercase"
         }
