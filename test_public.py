@@ -265,11 +265,11 @@ def run_interactive_cpp(inputs, expected_output, each_test_case_folder_path, inp
     
     diffReporter = difflib.HtmlDiff()
     html_diff = diffReporter.make_file(exected_dump, their_dump) 
-    with open(f"diffs/{test_type}/{input_folder}_cache_out.html", "w", encoding="utf-8") as f:
+    with open(f"diffs/{test_type}/{input_folder}_cache_dump.html", "w", encoding="utf-8") as f:
         f.write(html_diff)
     
     html_diff = diffReporter.make_file(lexed_exprected_dump, lexed_their_dump)
-    with open(f"diffs/{test_type}/{input_folder}_cache_out_lexed.html", "w", encoding="utf-8") as f:
+    with open(f"diffs/{test_type}/{input_folder}_cache_dump_lexed.html", "w", encoding="utf-8") as f:
         f.write(html_diff)
             
     seq_match = difflib.SequenceMatcher(None, lexed_exprected_dump, lexed_their_dump)
