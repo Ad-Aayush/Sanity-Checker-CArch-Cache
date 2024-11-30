@@ -1,0 +1,5 @@
+cache_sim enable ./Tests/Associativity/test3/config.txt
+load ./Tests/Associativity/test3/input.s
+run
+exit
+

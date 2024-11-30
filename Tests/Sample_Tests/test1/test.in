@@ -2,4 +2,4 @@ cache_sim enable ./Tests/Sample_Tests/test1/config.txt
 load ./Tests/Sample_Tests/test1/input.s
 run
 cache_sim dump cache.dump
-
+exit

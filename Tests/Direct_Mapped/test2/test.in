@@ -2,4 +2,4 @@ cache_sim enable ./Tests/Direct_Mapped/test2/config.txt
 load ./Tests/Direct_Mapped/test2/input.s
 run
 cache_sim dump cache.dump
-
+exit
