@@ -147,7 +147,20 @@ def handle_process(commands):
             exit_gracefully()
     return outputs
 
-def run_interactive_cpp( inputs, expected_output, input_folder=None, test_type=None):
+def get_lex_tokens(lex_exec: str, lex_input: list):
+    with open("inp.txt", "w") as f:
+        f.write("\n".join(lex_input))
+    with open("inp.txt", "r") as f: 
+        result = subprocess.run([lex_exec], stdin=f, capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f"Tester failed with return code {result.returncode}")
+            return False
+        lexed_outputs = result.stdout.split("\n")
+    
+        
+    return lexed_outputs
+
+def run_interactive_cpp(inputs, expected_output, each_test_case_folder_path, input_folder=None, test_type=None):
     """Compiles and runs the C++ file interactively, sending inputs and capturing output."""
 
     print("Running test case: ", input_folder)
@@ -160,32 +173,70 @@ def run_interactive_cpp( inputs, expected_output, input_folder=None, test_type=N
     )
     process_thread.start()
     process_thread.join()  
+    # Print current working directory
+    isDump = False
 
     with open(expected_output, 'r') as expected_file:
         expected_lines = expected_file.readlines()
     outputs_cleaned = [line.strip().lower() for entry in outputs if entry for line in entry.split('\n') if line]
     expected_lines = [line.strip().lower() for line in expected_lines if line.strip() != '']
-    with open("inp.txt", "w") as f:
-        f.write("\n".join(outputs_cleaned))
-    with open("inp.txt", "r") as f: 
-        result = subprocess.run(["./tester"], stdin=f, capture_output=True, text=True)
-        if result.returncode != 0:
-            print(f"Tester failed with return code {result.returncode}")
-            return False
-        lexed_outputs = result.stdout.split("\n")
+
+    # Check if input.output file exists
+    cache_out_path = os.path.join(each_test_case_folder_path, "input.output")
+
+    if os.path.exists(cache_out_path):
+        with open(os.path.join(each_test_case_folder_path, "input.output"), "r") as f:
+            their_cache_out = f.readlines()
+
+        their_cache_out = [line.strip().lower() for line in their_cache_out if line.strip() != '']
+    else:
+        print("No input.output file found")
+        their_cache_out = []
     
-    with open("inp.txt", "w") as f:
-        f.write("\n".join(expected_lines))
+    cache_out_exp_path = os.path.join(each_test_case_folder_path, "expected.output")
+
+    if os.path.exists(cache_out_exp_path):
+        with open(cache_out_exp_path, "r") as f:
+            expected_cache_out = f.readlines()
+    else:
+        expected_cache_out = []
+
+    expected_dump_path = os.path.join(each_test_case_folder_path, "expected.dump")
+
+    if os.path.exists(expected_dump_path):
+        isDump = True
+        with open(expected_dump_path, "r") as f:
+            expected_dump = f.readlines()
+    else:
+        expected_dump = []
+
+    their_dump_path = "cache.dump"
+
+    if os.path.exists(their_dump_path):    
+        with open(their_dump_path, "r") as f:
+            their_dump = f.readlines()
+    else:
+        print("No cache.dump file found")
+        their_dump = []
+        
+    exected_dump = [line.strip().lower() for line in expected_dump if line.strip() != '']
+    their_dump = [line.strip().lower() for line in their_dump if line.strip() != '']
+        
     
-    with open("inp.txt", "r") as f:
-        result = subprocess.run(["./tester"], stdin=f, capture_output=True, text=True)
-        if result.returncode != 0:
-            print(f"Tester failed with return code {result.returncode}")
-            return False
-        lexed_expected = result.stdout.split("\n")
+
+    expected_cache_out = [line.strip().lower() for line in expected_cache_out if line.strip() != '']
+    
+        
+    lexed_outputs = get_lex_tokens("./tester", outputs_cleaned)
+    lexed_expected = get_lex_tokens("./tester", expected_lines)
+    lexed_expected_cache_out = get_lex_tokens("./output", expected_cache_out)
+    lexed_their_cache_out = get_lex_tokens("./output", their_cache_out)
+    lexed_exprected_dump = get_lex_tokens("./dump", expected_dump)
+    lexed_their_dump = get_lex_tokens("./dump", their_dump)
+
 
     
-    
+
     ## Writing a diff report
     diffReporter = difflib.HtmlDiff()
     html_diff = diffReporter.make_file(expected_lines, outputs_cleaned) 
@@ -195,14 +246,48 @@ def run_interactive_cpp( inputs, expected_output, input_folder=None, test_type=N
     html_diff = diffReporter.make_file(lexed_expected, lexed_outputs)
     with open(f"diffs/{test_type}/{input_folder}_lexed.html", "w", encoding="utf-8") as f:
         f.write(html_diff)
-    
+            
     seq_match = difflib.SequenceMatcher(None, lexed_expected, lexed_outputs)
-    ratio = seq_match.ratio()
+    ratio_1 = seq_match.ratio()
     ## Comparing the outputs
-    if ratio == 1.0:
-        return True
-    else:
+    
+    diffReporter = difflib.HtmlDiff()
+    html_diff = diffReporter.make_file(expected_cache_out, their_cache_out) 
+    with open(f"diffs/{test_type}/{input_folder}_cache_out.html", "w", encoding="utf-8") as f:
+        f.write(html_diff)
+    
+    html_diff = diffReporter.make_file(lexed_expected_cache_out, lexed_their_cache_out)
+    with open(f"diffs/{test_type}/{input_folder}_cache_out_lexed.html", "w", encoding="utf-8") as f:
+        f.write(html_diff)
+            
+    seq_match = difflib.SequenceMatcher(None, lexed_expected_cache_out, lexed_their_cache_out)
+    ratio_2 = seq_match.ratio()
+    
+    diffReporter = difflib.HtmlDiff()
+    html_diff = diffReporter.make_file(exected_dump, their_dump) 
+    with open(f"diffs/{test_type}/{input_folder}_cache_out.html", "w", encoding="utf-8") as f:
+        f.write(html_diff)
+    
+    html_diff = diffReporter.make_file(lexed_exprected_dump, lexed_their_dump)
+    with open(f"diffs/{test_type}/{input_folder}_cache_out_lexed.html", "w", encoding="utf-8") as f:
+        f.write(html_diff)
+            
+    seq_match = difflib.SequenceMatcher(None, lexed_exprected_dump, lexed_their_dump)
+    ratio_3 = seq_match.ratio()
+    
+    if ratio_1 != 1:
+        print("Simulator issue, or Cache Stat issue")
         return False
+
+    if ratio_2 != 1:
+        print("Cache output issue")
+        return False
+    
+    if ratio_3 != 1 and isDump:
+        print("Dump issue")
+        return False
+
+    return True
 
 def exit_gracefully():
     shutil.rmtree("submission_files")
@@ -246,6 +331,7 @@ def main(zip_file, tests_folder):
             print(f"Incorrect executable format. Executable should be named riscv_sim\n")
             exit_gracefully()
         TestGroup = os.listdir(tests_folder)
+        print("TestGroup", TestGroup)
 
         for test_type in TestGroup:
             each_test_type_folder_path = os.path.join(tests_folder, test_type)
@@ -255,13 +341,14 @@ def main(zip_file, tests_folder):
             for test in test_cases:
                 each_test_case_folder_path = os.path.join(each_test_type_folder_path, test)
                 test_cases = os.listdir(each_test_case_folder_path)
-                input_file = os.path.join(each_test_case_folder_path,"test.in")
+                input_file = os.path.join(each_test_case_folder_path, "test.in")
                 output_file = os.path.join(each_test_case_folder_path, "test.out")
 
                 with open(input_file, 'r') as infile:
                     inputs = [line.strip() for line in infile.readlines()]
 
-                success = run_interactive_cpp( inputs, output_file, test, test_type)
+                print("Each Test Case Folder Path: ", each_test_case_folder_path)
+                success = run_interactive_cpp( inputs, output_file, each_test_case_folder_path, test, test_type)
 
                 if success:
                     print(f"\033[92mTest case: {test_type+'/'+test} passed\033[00m")

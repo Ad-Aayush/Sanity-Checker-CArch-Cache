@@ -1,13 +1,3 @@
+cache_sim enable ./Tests/Sample_Tests/test2/config.txt
 load ./Tests/Sample_Tests/test2/input.s
-break 12
-break 14
-show-stack
 run
-show-stack
-step
-run
-step
-show-stack
-run
-show-stack
-exit

@@ -1,10 +1,5 @@
-load ./Tests/Sample_Tests/test1/input1.s
-step
-step
-step
-step
-mem 0x10000 4
-regs 
+cache_sim enable ./Tests/Sample_Tests/test1/config.txt
+load ./Tests/Sample_Tests/test1/input.s
 run
-step
-exit
+cache_sim dump cache.dump
+
