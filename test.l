@@ -24,7 +24,7 @@ executed.* ;
         num[i - firstZero] = yytext[i];
     }
     
-    int i = firstZero;
+    int i = 2;
     while(i < strlen(num) &&  num[i] == '0') {
         i++;
     }
@@ -42,8 +42,21 @@ executed.* ;
     }
 }
 0[xX][0-9a-fA-F]+ ;
-[0-9]+.[0-9]+ {
-    double num = atof(yytext);
+\=[ ]*[0-9]+.[0-9]+ {
+    int firstDigit = 0;
+    char number[64] = "";
+    for (int i = 0; i < strlen(yytext); i++) {
+        if (yytext[i] >= '0' && yytext[i] <= '9') {
+            firstDigit = i;
+            break;
+        }
+    }
+
+    for (int i = firstDigit; i < strlen(yytext); i++) {
+        number[i - firstDigit] = yytext[i];
+    }
+
+    double num = atof(number);
     
 
     fprintf(stdout, "%0.2lf\n", num);
@@ -58,7 +71,6 @@ executed.* ;
 
 
 
-\-?[0-9]+ {fprintf(stdout, "%d\n", atoi(yytext));}
 [Br][Rr][Ee][Aa][Kk][Pp][Oo][Ii][Nn][Tt] { fprintf(stdout, "Breakpoint\n"); }
 [Ll][Ii][Nn][Ee] {fprintf(stdout, "line\n");}
 

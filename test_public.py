@@ -84,6 +84,8 @@ outputs = []
 def handle_process(commands, folder_path):
     try:
         # Start the process
+        if 'riscv_sim' in os.listdir(folder_path):
+            subprocess.run(["rm", "-f", os.path.join(folder_path, 'riscv_sim')])
         subprocess.run(["cp", "./submission_files/riscv_sim", folder_path])
         prev_dir = os.getcwd()
         os.chdir(folder_path)
@@ -188,11 +190,35 @@ def run_interactive_cpp(inputs, expected_output, each_test_case_folder_path, inp
 
     # Check if input.output file exists
     cache_out_path = os.path.join(each_test_case_folder_path, "input.output")
+    alt_out_path = os.path.join(each_test_case_folder_path, ".output")
+    alt2_out_path = os.path.join(each_test_case_folder_path, "input.out")
+    alt3_out_path = os.path.join(each_test_case_folder_path, "input.s.output")
+    alt4_out_path = os.path.join(each_test_case_folder_path, "cache.output")
 
     if os.path.exists(cache_out_path):
-        with open(os.path.join(each_test_case_folder_path, "input.output"), "r") as f:
+        with open(cache_out_path, "r") as f:
             their_cache_out = f.readlines()
 
+        their_cache_out = [line.strip().lower() for line in their_cache_out if line.strip() != '']
+    elif os.path.exists(alt_out_path):
+        with open(alt_out_path, "r") as f:
+            their_cache_out = f.readlines()
+        
+        their_cache_out = [line.strip().lower() for line in their_cache_out if line.strip() != '']
+    elif os.path.exists(alt2_out_path):
+        with open(alt2_out_path, "r") as f:
+            their_cache_out = f.readlines()
+        
+        their_cache_out = [line.strip().lower() for line in their_cache_out if line.strip() != '']
+    elif os.path.exists(alt3_out_path):
+        with open(alt3_out_path, "r") as f:
+            their_cache_out = f.readlines()
+        
+        their_cache_out = [line.strip().lower() for line in their_cache_out if line.strip() != '']
+    elif os.path.exists(alt4_out_path):
+        with open(alt4_out_path, "r") as f:
+            their_cache_out = f.readlines()
+        
         their_cache_out = [line.strip().lower() for line in their_cache_out if line.strip() != '']
     else:
         print("No input.output file found")
@@ -220,8 +246,10 @@ def run_interactive_cpp(inputs, expected_output, each_test_case_folder_path, inp
     if os.path.exists(their_dump_path):    
         with open(their_dump_path, "r") as f:
             their_dump = f.readlines()
-    else:
+    elif isDump:
         print("No cache.dump file found")
+        their_dump = []
+    else:
         their_dump = []
         
     exected_dump = [line.strip().lower() for line in expected_dump if line.strip() != '']
@@ -280,21 +308,32 @@ def run_interactive_cpp(inputs, expected_output, each_test_case_folder_path, inp
     seq_match = difflib.SequenceMatcher(None, lexed_exprected_dump, lexed_their_dump)
     ratio_3 = seq_match.ratio()
 
-    subprocess.run(["rm", "-f", cache_out_path, their_dump_path, os.path.join(each_test_case_folder_path, 'riscv_sim')])
-    
+    subprocess.run(["rm", "-f", cache_out_path, their_dump_path, os.path.join(each_test_case_folder_path, 'riscv_sim'), alt_out_path, os.path.join(each_test_case_folder_path, 'temp.hex'), os.path.join(each_test_case_folder_path, 'output.hex'), os.path.join(each_test_case_folder_path, 'cache.out'), os.path.join(each_test_case_folder_path, 'inp.txt'), alt2_out_path, alt3_out_path, alt4_out_path])
+    ret = True
+    score = 0
+
     if ratio_1 != 1:
         print("Simulator issue, or Cache Stat issue")
-        return False
+        ret = False
+    else:
+        score += 4
+    
 
     if ratio_2 != 1:
         print("Cache output issue")
-        return False
+        ret = False
+    else:
+        score += 3
     
     if ratio_3 != 1 and isDump:
         print("Dump issue")
-        return False
+        ret = False
+    else:
+        score += 3
 
-    return True
+    print(f"Score: {score}/10")
+
+    return ret
 
 def exit_gracefully():
     shutil.rmtree("submission_files")
@@ -320,6 +359,8 @@ def main(zip_file, tests_folder):
         if files_check:
             print("\033[92mAll Required Files Present\033[00m\n")
     
+    if "riscv_sim" in os.listdir(custom_dir):
+        subprocess.run(["rm", "-f", os.path.join(custom_dir, 'riscv_sim')])
 
     if True:
         compile_command = "make"
@@ -377,6 +418,8 @@ if __name__ == "__main__":
         
     if len(sys.argv) == 3:
         run_type = sys.argv[2]
+    if os.path.exists("submission_files"):
+        shutil.rmtree("submission_files")
     subprocess.run (["rm" ,"-rf", "diffs"])
     zip_file = sys.argv[1]
     subprocess.run(["mkdir", "-p", "diffs"])
