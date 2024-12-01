@@ -2,4 +2,5 @@ cache_sim enable config.txt
 load input.s
 run
 cache_sim dump cache.dump
+mem 0x10100 1
 exit

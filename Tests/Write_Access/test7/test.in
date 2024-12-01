@@ -1,5 +1,0 @@
-cache_sim enable ./Tests/Write_Access/test7/config.txt
-load ./Tests/Write_Access/test7/input.s
-run
-cache_sim dump cache.dump
-exit

@@ -2,4 +2,7 @@ cache_sim enable config.txt
 load input.s
 run
 cache_sim dump cache.dump
+mem 0x10008 1
+cache_sim invalidate
+mem 0x10008 1
 exit

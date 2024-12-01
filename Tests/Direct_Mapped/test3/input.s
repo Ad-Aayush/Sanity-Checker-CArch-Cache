@@ -1,14 +1,11 @@
-.data
-.dword 10, 20, 30, 40, 50
-.text
 lui x3, 0x10
+lui x2, 0x10
+addi x2, x2, 512
 ld x4, 0(x3)
-ld x4, 8(x3)
-ld x4, 16(x3)
-ld x4, 24(x3)
 ld x4, 32(x3)
-ld x4, 0(x3)
-ld x4, 8(x3)
-ld x4, 16(x3)
-ld x4, 24(x3)
+ld x4, 64(x3)
+sd x4, 32(x2)
+sd x4, 64(x2)
+sd x4, 0(x3)
+ld x4, 32(x2)
 ld x4, 32(x3)

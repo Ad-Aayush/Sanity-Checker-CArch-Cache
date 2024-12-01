@@ -1,5 +1,8 @@
-cache_sim enable ./Tests/Write_Access/test4/config.txt
-load ./Tests/Write_Access/test4/input.s
+cache_sim enable config.txt
+load input.s
 run
 cache_sim dump cache.dump
+mem 0x10408 1
+cache_sim invalidate
+mem 0x10408 1
 exit
