@@ -1,5 +1,5 @@
-cache_sim enable ./Tests/Associativity/test1/config.txt
-load ./Tests/Associativity/test1/input.s
+cache_sim enable config.txt
+load input.s
 run
 exit
 

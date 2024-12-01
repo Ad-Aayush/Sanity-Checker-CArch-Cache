@@ -81,11 +81,14 @@ def check_required_files(directory, config_path="config.json"):
     return True
 
 outputs = []
-def handle_process(commands):
+def handle_process(commands, folder_path):
     try:
         # Start the process
+        subprocess.run(["cp", "./submission_files/riscv_sim", folder_path])
+        prev_dir = os.getcwd()
+        os.chdir(folder_path)
         process = subprocess.Popen(
-            ["./submission_files/riscv_sim"], 
+            ["./riscv_sim"], 
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -140,11 +143,13 @@ def handle_process(commands):
     finally:
         try:
             process.terminate()
+            os.chdir(prev_dir)
             # print(f"Terminated process with PID {process.pid}")
             return outputs
         except Exception as e:
             print(f"Error terminating process: {e}")
             exit_gracefully()
+    os.chdir(prev_dir)
     return outputs
 
 def get_lex_tokens(lex_exec: str, lex_input: list):
@@ -168,7 +173,7 @@ def run_interactive_cpp(inputs, expected_output, each_test_case_folder_path, inp
 
     process_thread = threading.Thread(
         target=handle_process,
-        args=(inputs,),
+        args=(inputs, each_test_case_folder_path),
         daemon=True
     )
     process_thread.start()
@@ -210,7 +215,7 @@ def run_interactive_cpp(inputs, expected_output, each_test_case_folder_path, inp
     else:
         expected_dump = []
 
-    their_dump_path = "cache.dump"
+    their_dump_path = os.path.join(each_test_case_folder_path, "cache.dump")
 
     if os.path.exists(their_dump_path):    
         with open(their_dump_path, "r") as f:
@@ -274,6 +279,8 @@ def run_interactive_cpp(inputs, expected_output, each_test_case_folder_path, inp
             
     seq_match = difflib.SequenceMatcher(None, lexed_exprected_dump, lexed_their_dump)
     ratio_3 = seq_match.ratio()
+
+    subprocess.run(["rm", "-f", cache_out_path, their_dump_path, os.path.join(each_test_case_folder_path, 'riscv_sim')])
     
     if ratio_1 != 1:
         print("Simulator issue, or Cache Stat issue")

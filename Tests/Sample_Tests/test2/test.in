@@ -1,4 +1,4 @@
-cache_sim enable ./Tests/Sample_Tests/test2/config.txt
-load ./Tests/Sample_Tests/test2/input.s
+cache_sim enable config.txt
+load input.s
 run
 exit
